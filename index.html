@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d1726">
+    <meta name="description" content="A simple weather dashboard for your city and the week ahead.">
+    <title>Skyline — Weather, at a glance</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/weather.svg">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/app.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="Skyline Weather home">
+          <span class="brand-mark" aria-hidden="true">
+            <img src="./assets/weather.svg" alt="">
+          </span>
+          <span>Skyline Weather</span>
+        </a>
+        <div class="header-actions">
+          <span class="api-note"><span class="online-dot"></span> Live weather · Open-Meteo</span>
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to light mode">
+            <span id="theme-icon" aria-hidden="true">☀</span>
+            <span id="theme-label">Light mode</span>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="intro" aria-labelledby="page-title">
+          <p class="eyebrow">YOUR LITTLE WINDOW TO THE WEATHER</p>
+          <h1 id="page-title">Weather, <span>at a glance.</span></h1>
+          <p class="intro-copy">Find a place and get a feel for the day — and the week ahead.</p>
+
+          <form id="search-form" class="search-form">
+            <label class="sr-only" for="city-input">Search for a city</label>
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input id="city-input" name="city" type="search" placeholder="Search a city..." autocomplete="off" required>
+            <button class="search-button" type="submit">Search <span aria-hidden="true">↗</span></button>
+          </form>
+          <button id="location-button" class="location-button" type="button">
+            <span aria-hidden="true">◎</span> Use my location
+          </button>
+        </section>
+
+        <p id="status-message" class="status-message" role="status" aria-live="polite"></p>
+
+        <section id="search-results" class="search-results panel" aria-label="Matching places" hidden>
+          <h2>Choose a place</h2>
+          <div id="result-list" class="result-list"></div>
+        </section>
+
+        <section id="weather-dashboard" class="weather-dashboard" aria-live="polite" hidden>
+          <div class="location-heading">
+            <div>
+              <p class="eyebrow">WEATHER REPORT</p>
+              <h2 id="place-name"></h2>
+              <p id="place-details" class="place-details"></p>
+            </div>
+            <div id="local-time" class="local-time"></div>
+          </div>
+
+          <div class="weather-grid">
+            <section class="current-card panel" aria-labelledby="current-title">
+              <div class="current-topline">
+                <h3 id="current-title">Right now</h3>
+                <span id="current-date" class="muted"></span>
+              </div>
+              <div class="current-weather">
+                <span id="current-icon" class="weather-icon" aria-hidden="true"></span>
+                <div>
+                  <p id="current-temperature" class="temperature"></p>
+                  <p id="current-condition" class="condition"></p>
+                </div>
+              </div>
+              <div class="current-stats">
+                <div class="stat">
+                  <span class="stat-icon" aria-hidden="true">↗</span>
+                  <span class="stat-label">Feels like</span>
+                  <strong id="feels-like"></strong>
+                </div>
+                <div class="stat">
+                  <span class="stat-icon" aria-hidden="true">◉</span>
+                  <span class="stat-label">Humidity</span>
+                  <strong id="humidity"></strong>
+                </div>
+                <div class="stat">
+                  <span class="stat-icon" aria-hidden="true">≈</span>
+                  <span class="stat-label">Wind</span>
+                  <strong id="wind-speed"></strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="hourly-card panel" aria-labelledby="hourly-title">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">COMING UP</p>
+                  <h3 id="hourly-title">Next 12 hours</h3>
+                </div>
+                <span class="heading-decoration" aria-hidden="true">↗</span>
+              </div>
+              <div id="hourly-list" class="hourly-list"></div>
+            </section>
+
+            <section class="weekly-card panel" aria-labelledby="weekly-title">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">PLAN AHEAD</p>
+                  <h3 id="weekly-title">7-day forecast</h3>
+                </div>
+                <span class="muted">Chance of rain</span>
+              </div>
+              <div id="weekly-list" class="weekly-list"></div>
+            </section>
+
+            <section class="air-card panel" aria-labelledby="air-title">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">BREATHE EASY</p>
+                  <h3 id="air-title">Air quality</h3>
+                </div>
+                <span class="muted">Modeled · US AQI</span>
+              </div>
+              <div id="air-quality-content" class="air-quality-content">
+                <p class="data-placeholder">Loading air quality…</p>
+              </div>
+            </section>
+
+            <section class="elevation-card panel" aria-labelledby="elevation-title">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">ABOVE SEA LEVEL</p>
+                  <h3 id="elevation-title">Elevation</h3>
+                </div>
+                <span class="heading-decoration" aria-hidden="true">⌁</span>
+              </div>
+              <div id="elevation-content" class="elevation-content">
+                <p class="data-placeholder">Loading elevation…</p>
+              </div>
+            </section>
+
+            <details class="water-card panel">
+              <summary class="section-heading">
+                <div class="water-heading">
+                  <p class="eyebrow">OPTIONAL · RIVERS & COASTS</p>
+                  <h3 id="water-title">Water conditions</h3>
+                </div>
+                <span class="disclosure-icon" aria-hidden="true">+</span>
+              </summary>
+              <div class="water-content">
+                <p class="water-intro">Check modeled river flow and nearby sea conditions. Coverage depends on the location.</p>
+                <button id="water-button" class="secondary-button" type="button">Load water data <span aria-hidden="true">↗</span></button>
+                <div id="water-results" class="water-results" hidden>
+                  <div>
+                    <span class="water-label">River flow</span>
+                    <strong id="flood-value">—</strong>
+                    <span id="flood-river" class="water-detail"></span>
+                    <span id="flood-detail" class="water-detail"></span>
+                  </div>
+                  <div>
+                    <span class="water-label">Sea conditions</span>
+                    <strong id="marine-value">—</strong>
+                    <span id="marine-detail" class="water-detail"></span>
+                  </div>
+                </div>
+                <p id="water-note" class="water-note" role="status" aria-live="polite"></p>
+                <p class="water-note">River discharge is not a flood warning; marine data is not for navigation.<br>Nearest river may be wrong. River names from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a>.</p>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <details class="usage-card panel">
+          <summary class="usage-summary">
+            <div>
+              <p class="eyebrow">FREE / OPEN-ACCESS</p>
+              <h2 id="usage-title">Request usage estimate</h2>
+            </div>
+            <span class="usage-summary-end">
+              <span class="usage-scope">This browser only</span>
+              <span class="disclosure-icon" aria-hidden="true">+</span>
+            </span>
+          </summary>
+          <div class="usage-content">
+            <p class="usage-explainer">These are requests this browser has made from this site, not your official account or all visitors. Open-Meteo does not provide an account-wide usage total for the public free API; the provider may count some requests as more than one call.</p>
+            <div id="usage-meters" class="usage-meters"></div>
+            <p id="usage-storage-note" class="usage-storage-note">Counts are saved in this browser for this site.</p>
+            <p class="plan-note">Free / open-access is for non-commercial use. Limits shown are 600 calls/min, 5,000/hour, 10,000/day, and 300,000/month. See <a href="https://open-meteo.com/en/pricing" target="_blank" rel="noreferrer">Open-Meteo pricing and terms</a>.</p>
+          </div>
+        </details>
+      </main>
+
+      <footer>
+        <span>
+          Made for curious skies.
+          <br>
+          Made by Baljit Panda (<a href="https://github.com/olymppus-mons26/skyline-weather" target="_blank" rel="noreferrer">olympus/mons26</a>)
+          <br>
+          Thank you to <a href="https://surge.sh/" target="_blank" rel="noreferrer">Surge</a>.
+          <br>
+          Weather icon by <a href="https://www.svgrepo.com/svg/530233/weather" target="_blank" rel="noreferrer">SVG Repo</a>.
+        </span>
+        <span>Data: <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Weather</a> · <a href="https://open-meteo.com/en/docs/air-quality-api" target="_blank" rel="noreferrer">Air quality</a> · <a href="https://open-meteo.com/en/docs/elevation-api" target="_blank" rel="noreferrer">Elevation</a> · <a href="https://open-meteo.com/en/docs/flood-api" target="_blank" rel="noreferrer">Flood</a> · <a href="https://open-meteo.com/en/docs/marine-weather-api" target="_blank" rel="noreferrer">Marine</a></span>
+      </footer>
+    </div>
+  </body>
+</html>
