@@ -1,4 +1,4 @@
-# Skyline Weather
+# 🌦️ Skyline Weather
 
 Skyline Weather is a responsive, browser-only weather dashboard.
 
