@@ -87,6 +87,8 @@ The Free / Open-Access tier is for non-commercial use. Subject to the [Open-Mete
 
 Weather icon by [SVG Repo](https://www.svgrepo.com/svg/530233/weather). The icon is provided under its source-page terms and is separately attributed; it is not covered by this project's MIT license.
 
+---
+
 ### License
 
 MIT License
